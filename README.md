@@ -17,6 +17,18 @@
 
 ## 安装
 
+### 发布版安装
+
+1. 下载发布版
+
+2. 安装
+```shell
+pip install aliddns-1.0.0-py3-none-any.whl
+```
+
+
+### 源码安装
+
 ```shell
 git clone https://github.com/zylan29/aliddns.git
 
