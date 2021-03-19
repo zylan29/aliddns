@@ -45,7 +45,7 @@ class AliDDNS(object):
         request.set_Value(value)
         request.set_accept_format(accept_format)
 
-        response = client.do_action_with_exception(request)
+        response = self.acs_client.do_action_with_exception(request)
     
     def add(self, RR: str, domainName: str, recordType: str, value: str): 
         request = AddDomainRecordRequest()
@@ -56,7 +56,7 @@ class AliDDNS(object):
         request.set_Value(value)
         request.set_accept_format(accept_format)
 
-        response = client.do_action_with_exception(request)
+        response = self.acs_client.do_action_with_exception(request)
     
     @staticmethod
     def get_publib_ip():
