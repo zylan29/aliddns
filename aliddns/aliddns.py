@@ -24,7 +24,7 @@ accept_format = 'json'
 
 default_timeout = 5
 
-
+ 
 class AliDDNS(object):
 
     def __init__(self, accesskeyId, accesskeySecret, regionId):
@@ -116,9 +116,10 @@ class AliDDNS(object):
                         if recordIPAddr != publicIP:
                             self.update(record['RR'], record['RecordId'], recordType, publicIP)
                             print('{} Update {} record for {}.{}: from {} to {}'.format(datetime.now(), recordType, record['RR'], domainName, recordIPAddr, publicIP))
-                    if not found:
-                        self.add(resourceRecord, domainName, recordType, publicIP)
-                        print('{} Add {} record for {}.{}: {}'.format(datetime.now(), recordType, resourceRecord, domainName, publicIP))
+                        break
+                if not found:
+                    self.add(resourceRecord, domainName, recordType, publicIP)
+                    print('{} Add {} record for {}.{}: {}'.format(datetime.now(), recordType, resourceRecord, domainName, publicIP))
     
     def ddns(self, domainName: str, resourceRecords=default_RRs):
         localIPv4, localIPv6 = self.get_local_ip()
