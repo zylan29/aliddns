@@ -21,6 +21,7 @@ ipv6_record_type = 'AAAA'
 
 accept_format = 'json'
 
+default_timeout = 5
 
 class AliDDNS(object):
 
@@ -60,22 +61,38 @@ class AliDDNS(object):
     
     @staticmethod
     def get_publib_ip():
-        publicIPv4 = str(urlopen(ipv4_api_url).read().strip(), encoding='utf-8')
-        publicIPv6 = str(urlopen(ipv6_api_url).read().strip(), encoding='utf-8')
+        publicIPv4 = ''
+        try:
+            publicIPv4 = str(urlopen(ipv4_api_url, timeout=default_timeout).read().strip(), encoding='utf-8')
+        except:
+            pass
+        
+        publicIPv6 = ''
+        try:
+            publicIPv6 = str(urlopen(ipv6_api_url, timeout=default_timeout).read().strip(), encoding='utf-8')
+        except:
+            pass
 
         return publicIPv4, publicIPv6
     
     @staticmethod
     def get_local_ip():
+        localIPv4 = ''
         try:
             socketIPv4 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            socketIPv4.settimeout(default_timeout)
             socketIPv4.connect((ipv4_api, 443))
             localIPv4 = socketIPv4.getsockname()[0]
+        finally:
+            socketIPv4.close()
+        
+        localIPv6 = ''
+        try:
             socketIPv6 = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+            socketIPv6.settimeout(default_timeout)
             socketIPv6.connect((ipv6_api, 443))
             localIPv6 = socketIPv6.getsockname()[0]
         finally:
-            socketIPv4.close()
             socketIPv6.close()
 
         return localIPv4, localIPv6
@@ -99,11 +116,14 @@ class AliDDNS(object):
         localIPv4, localIPv6 = self.get_local_ip()
         publicIPv4, publicIPv6 = self.get_publib_ip()
 
-        if localIPv4 == publicIPv4:
+        if publicIPv4 != '' and localIPv4 == publicIPv4:
             self._ddns(domainName, ipv4_record_type, publicIPv4)
 
-        if localIPv6 == publicIPv6:
+        if publicIPv6 != '' and localIPv6 == publicIPv6:
             self._ddns(domainName, ipv6_record_type, publicIPv6)
+
+        if publicIPv4 == '' and publicIPv6 == '':
+            print('WARN: no public IP found.')
     
 
 def main():
