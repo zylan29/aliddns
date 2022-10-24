@@ -4,9 +4,9 @@
 
 1. 同时支持IPv4和IPv6
 2. 自动探测本地IP和公网IP，只有当二者一致时才可能将其添加到解析记录中 
-3. 如果当前域名没有解析记录，则添加该域名的`@`解析记录
-4. 如果当前域名有解析记录，但记录的IP与探测到的IP不符，则更新该条记录
-5. 同时当前域名有多条解析记录，则只修改其第一条。
+3. 支持定义RR列表，默认为'@'和'*'
+4. 如果当前域名没有解析记录，则添加该域名的`@`解析记录
+5. 如果当前域名有解析记录，但记录的IP与探测到的IP不符，则更新该条记录
 
 ## 依赖
 
@@ -23,7 +23,7 @@
 
 2. 安装
 ```shell
-pip install aliddns-1.0.0-py3-none-any.whl
+pip install aliddns-1.0.3-py3-none-any.whl
 ```
 
 
@@ -44,8 +44,7 @@ pip install .
 ### 单次使用
 
 ```
-aliddns -h
-usage: aliddns [-h] [-k ACCESSKEY_ID] [-s ACCESSKEY_SECRET] [-r REGION_ID] [-d DOMAIN_NAME]
+usage: aliddns [-h] [-k ACCESSKEY_ID] [-s ACCESSKEY_SECRET] [-d DOMAIN_NAME] [-r RESOURCE_RECORDS] [--region-id REGION_ID]
 
 Ali DDNS command-line tool.
 
@@ -55,18 +54,21 @@ optional arguments:
                         AccessKey ID
   -s ACCESSKEY_SECRET, --accesskey-secret ACCESSKEY_SECRET
                         AccessKey secret
-  -r REGION_ID, --region-id REGION_ID
-                        Region ID
   -d DOMAIN_NAME, --domain-name DOMAIN_NAME
                         Your domain name
+  -r RESOURCE_RECORDS, --resource-records RESOURCE_RECORDS
+                        Your resource record, e.g. @ *
+  --region-id REGION_ID
+                        Region ID
 ```
 
 参数说明：
 ```
 -k 你的AccessKey ID
 -s 你的AccessKey secret
--r Region ID，默认为cn-hangzhou
 -d 你的域名
+-r RR，以空格间隔的列表，默认为'@'和'*'
+--region-id Region ID，默认为cn-hangzhou
 ```
 
 ### 定时任务
@@ -77,6 +79,6 @@ crontab -u 你的用户名 -e
 ```
 添加如下内容
 ```
-* * * * * '到aliddns命令的绝对路径' -k '你的AccessKey ID' -s '你的AccessKey secret' -d '你的域名' >> '输出日志文件'
+0 * * * * '到aliddns命令的绝对路径' -k '你的AccessKey ID' -s '你的AccessKey secret' -d '你的域名' >> '输出日志文件'
 ```
-上述配置实现每分钟执行一次aliddns
+上述配置实现每小时执行一次aliddns
