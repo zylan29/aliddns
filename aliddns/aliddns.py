@@ -9,6 +9,7 @@ from aliyunsdkalidns.request.v20150109.DescribeDomainRecordsRequest import Descr
 from aliyunsdkalidns.request.v20150109.UpdateDomainRecordRequest import UpdateDomainRecordRequest
 from aliyunsdkalidns.request.v20150109.AddDomainRecordRequest import AddDomainRecordRequest
 
+
 ipv4_api = 'api-ipv4.ip.sb'
 ipv6_api = 'api-ipv6.ip.sb'
 ipv4_api_url = 'https://' + ipv4_api + '/ip'
@@ -23,10 +24,11 @@ accept_format = 'json'
 
 default_timeout = 5
 
+
 class AliDDNS(object):
 
-    def __init__(self, acs_client: AcsClient):
-        self.acs_client = acs_client
+    def __init__(self, accesskeyId, accesskeySecret, regionId):
+        self.acs_client = AcsClient(accesskeyId, accesskeySecret, regionId)
 
     def describe(self, domainName: str, recordType: str):
         request = DescribeDomainRecordsRequest()
@@ -46,7 +48,7 @@ class AliDDNS(object):
         request.set_Value(value)
         request.set_accept_format(accept_format)
 
-        response = self.acs_client.do_action_with_exception(request)
+        return self.acs_client.do_action_with_exception(request)
     
     def add(self, RR: str, domainName: str, recordType: str, value: str): 
         request = AddDomainRecordRequest()
@@ -57,7 +59,7 @@ class AliDDNS(object):
         request.set_Value(value)
         request.set_accept_format(accept_format)
 
-        response = self.acs_client.do_action_with_exception(request)
+        return self.acs_client.do_action_with_exception(request)
     
     @staticmethod
     def get_publib_ip():
@@ -142,8 +144,7 @@ def main():
     parser.add_argument('--region-id', default='cn-hangzhou', help='Region ID')
 
     args = parser.parse_args()
-    
-    client = AcsClient(args.accesskey_id, args.accesskey_secret, args.region_id)
-    ddns = AliDDNS(client)
+   
+    ddns = AliDDNS(args.accesskey_id, args.accesskey_secret, args.region_id)
     ddns.ddns(args.domain_name, args.resource_records)
     
