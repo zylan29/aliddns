@@ -131,7 +131,7 @@ class AliDDNS(object):
             print('WARN: no local IP found.')
             return
 
-        if publicIPv4 == '' and publicIPv6 == '' and not useLocalIP:
+        if publicIPv4 == '' and publicIPv6 == '':
             print('WARN: no public IP found.')
             return
 
