@@ -71,6 +71,7 @@ optional arguments:
 -s 你的AccessKey secret
 -d 你的域名
 -r RR，以空格间隔的列表，默认为'@'和'*'
+-l 允许解析到本地IP
 --region-id Region ID，默认为cn-hangzhou
 ```
 
