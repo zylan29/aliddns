@@ -7,6 +7,7 @@
 3. 支持定义RR列表，默认为'@'和'*'
 4. 如果当前域名没有解析记录，则添加该域名的`@`解析记录
 5. 如果当前域名有解析记录，但记录的IP与探测到的IP不符，则更新该条记录
+6. 当没有公网IP时，可以使用-l开关开启使用本地IP模式
 
 ## 依赖
 
@@ -44,7 +45,8 @@ pip install .
 ### 单次使用
 
 ```
-usage: aliddns [-h] [-k ACCESSKEY_ID] [-s ACCESSKEY_SECRET] [-d DOMAIN_NAME] [-r RESOURCE_RECORDS] [--region-id REGION_ID]
+usage: aliddns [-h] [-k ACCESSKEY_ID] [-s ACCESSKEY_SECRET] [-d DOMAIN_NAME]
+               [-r RESOURCE_RECORDS [RESOURCE_RECORDS ...]] [-l] [--region-id REGION_ID]
 
 Ali DDNS command-line tool.
 
@@ -56,8 +58,9 @@ optional arguments:
                         AccessKey secret
   -d DOMAIN_NAME, --domain-name DOMAIN_NAME
                         Your domain name
-  -r RESOURCE_RECORDS, --resource-records RESOURCE_RECORDS
+  -r RESOURCE_RECORDS [RESOURCE_RECORDS ...], --resource-records RESOURCE_RECORDS [RESOURCE_RECORDS ...]
                         Your resource record, e.g. @ *
+  -l, --local-ip        Whether use local IP or not, default to NO
   --region-id REGION_ID
                         Region ID
 ```
