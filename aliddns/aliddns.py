@@ -1,14 +1,16 @@
 import argparse
-from datetime import datetime
 import json
 import socket
+from datetime import datetime
 from urllib.request import urlopen
 
+from aliyunsdkalidns.request.v20150109.AddDomainRecordRequest import \
+    AddDomainRecordRequest
+from aliyunsdkalidns.request.v20150109.DescribeDomainRecordsRequest import \
+    DescribeDomainRecordsRequest
+from aliyunsdkalidns.request.v20150109.UpdateDomainRecordRequest import \
+    UpdateDomainRecordRequest
 from aliyunsdkcore.client import AcsClient
-from aliyunsdkalidns.request.v20150109.DescribeDomainRecordsRequest import DescribeDomainRecordsRequest
-from aliyunsdkalidns.request.v20150109.UpdateDomainRecordRequest import UpdateDomainRecordRequest
-from aliyunsdkalidns.request.v20150109.AddDomainRecordRequest import AddDomainRecordRequest
-
 
 ipv4_api = 'api-ipv4.ip.sb'
 ipv6_api = 'api-ipv6.ip.sb'
@@ -121,19 +123,27 @@ class AliDDNS(object):
                     self.add(resourceRecord, domainName, recordType, publicIP)
                     print('{} Add {} record for {}.{}: {}'.format(datetime.now(), recordType, resourceRecord, domainName, publicIP))
     
-    def ddns(self, domainName: str, resourceRecords=default_RRs):
+    def ddns(self, domainName: str, resourceRecords=default_RRs, useLocalIP=False):
         localIPv4, localIPv6 = self.get_local_ip()
         publicIPv4, publicIPv6 = self.get_publib_ip()
 
-        if publicIPv4 == '' and publicIPv6 == '':
+        if localIPv4 == '' and localIPv6 == '':
+            print('WARN: no local IP found.')
+            return
+
+        if publicIPv4 == '' and publicIPv6 == '' and not useLocalIP:
             print('WARN: no public IP found.')
             return
 
         if publicIPv4 != '' and localIPv4 == publicIPv4:
             self._ddns(domainName, ipv4_record_type, resourceRecords, publicIPv4)
+        elif useLocalIP and localIPv4 != '':
+            self._ddns(domainName, ipv4_record_type, resourceRecords, localIPv4)
 
         if publicIPv6 != '' and localIPv6 == publicIPv6:
             self._ddns(domainName, ipv6_record_type, resourceRecords, publicIPv6)
+        elif useLocalIP and localIPv6 != '':
+            self._ddns(domainName, ipv6_record_type, resourceRecords, localIPv6)
     
 
 def main():
@@ -141,11 +151,12 @@ def main():
     parser.add_argument('-k', '--accesskey-id', help='AccessKey ID')
     parser.add_argument('-s', '--accesskey-secret', help='AccessKey secret')
     parser.add_argument('-d', '--domain-name', help='Your domain name')
-    parser.add_argument('-r', '--resource-records', type=list, default=default_RRs, help='Your resource record, e.g. @ *')
+    parser.add_argument('-r', '--resource-records', nargs='+', default=' '.join(default_RRs), help='Your resource record, e.g. @ *')
+    parser.add_argument('-l', '--local-ip', action="store_true", help='Whether use local IP or not, default to NO')
     parser.add_argument('--region-id', default='cn-hangzhou', help='Region ID')
 
     args = parser.parse_args()
    
     ddns = AliDDNS(args.accesskey_id, args.accesskey_secret, args.region_id)
-    ddns.ddns(args.domain_name, args.resource_records)
+    ddns.ddns(args.domain_name, args.resource_records, args.local_ip)
     
