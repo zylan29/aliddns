@@ -12,10 +12,10 @@ from aliyunsdkalidns.request.v20150109.UpdateDomainRecordRequest import \
     UpdateDomainRecordRequest
 from aliyunsdkcore.client import AcsClient
 
-ipv4_api = 'api-ipv4.ip.sb'
-ipv6_api = 'api-ipv6.ip.sb'
-ipv4_api_url = 'https://' + ipv4_api + '/ip'
-ipv6_api_url = 'https://' + ipv6_api + '/ip'
+ipv4_api = 'api4.ipify.org'
+ipv6_api = 'api6.ipify.org'
+ipv4_api_url = 'https://' + ipv4_api
+ipv6_api_url = 'https://' + ipv6_api
 
 default_RRs = ['@', '*']
 
