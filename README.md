@@ -24,7 +24,7 @@
 
 2. 安装
 ```shell
-pip install aliddns-1.0.5-py3-none-any.whl
+pip install aliddns-1.1.1-py3-none-any.whl
 ```
 
 
